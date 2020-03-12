@@ -13,8 +13,8 @@ Praktikum Modul 2 Sistem Operasi 2020
 ### Soal No. 1
 Buatlah program C yang menyerupai crontab untuk menjalankan script bash, dengan ketentuan :
 (a) Program menerima 4 argumen berupa :
-    i. Detik : 0-59 atau * (any value)
-    ii. Menit : 0-59 atau * (any value)
+    i. Detik : 0-59 atau * (any value) <enter>
+    ii. Menit : 0-59 atau * (any value) <enter>
     iii. Jam : 0-23 atau * (any value)
     iv. Path file .sh
     
@@ -43,7 +43,7 @@ Kiwa udh jago, jadi dia bikin program :
 
 (d) Buat program "killer" yang siap di run (executable) untuk menterminasi semua operasi program tersebut. Setelah di run, program akan menterminasi program utama, lalu mendelete dirinya sendiri.
 
-(e) Program utama bisa di run dalam dua mode, yaitu **MODE_A** dijalankan dengan argumen -a dan **MODE_B** dijalankan dengan argumen -b. Ketika dijalankan dalam **MODE_A**, program utama akan langsung menghentikan semua operasinya ketika program killer dijalankan. Untuk **MODE_B**, ketika program killer dijalankan, program utama akan berhenti tapi membiarkan proses di setiap folder yang masih berjalan sampai selesai (semua folder terisi gambar, terzip lalu di delete). 
+(e) Program utama bisa di run dalam dua mode, yaitu **MODE_A** dijalankan dengan argumen `-a` dan **MODE_B** dijalankan dengan argumen `-b`. Ketika dijalankan dalam **MODE_A**, program utama akan langsung menghentikan semua operasinya ketika program killer dijalankan. Untuk **MODE_B**, ketika program killer dijalankan, program utama akan berhenti tapi membiarkan proses di setiap folder yang masih berjalan sampai selesai (semua folder terisi gambar, terzip lalu di delete). 
 
 **KODINGAN :**
 ***soal2.c***
