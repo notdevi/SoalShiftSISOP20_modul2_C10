@@ -6,7 +6,7 @@ Praktikum Modul 2 Sistem Operasi 2020
 ### 2. Anggara Yuda Pratama (05111840000008)
 
 ### Daftar Soal
-* [No. 1](https://github.com/notdevi/SoalShiftSISOP20_modul2_C10/#soal-no.-1)
+* [No. 1](https://github.com/notdevi/SoalShiftSISOP20_modul2_C10/#soal-no-1)
 * [No. 2](https://github.com/notdevi/SoalShiftSISOP20_modul2_C10/#soal-no.-2)
 * [No. 3](https://github.com/notdevi/SoalShiftSISOP20_modul2_C10/#soal-no.-3)
 
