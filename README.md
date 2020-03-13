@@ -292,7 +292,7 @@ kemudian path dari masing-masing direktori didalam folder indomie dimasukkan ke 
 		strcat(location, makefile->d_name);
 ```
 Kemudian dilakukan pemindahan direktori ke direktori yang akan diisi file `.txt` dengan menggunakan fungsi `chdir`. Setelah itu dijalankan command untuk membuat file `coba1.txt` yaitu `touch` yang dipanggil melalui `execv`. Karena pembuatan file antara coba1 dan coba2 perlu dijeda, maka digunakan fungsi `sleep(3);`. Lalu buat file `coba2.txt` dengan cara yang sama. 
-```
+```c
 						if (child_1 = fork() > 0) {
 							chdir(location);
 							char *mktxt1[] = {"touch", "coba1.txt", NULL};
