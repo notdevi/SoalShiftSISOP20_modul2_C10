@@ -14,24 +14,24 @@ Praktikum Modul 2 Sistem Operasi 2020
 Buatlah program C yang menyerupai crontab untuk menjalankan script bash, dengan ketentuan :
 
 (a) Program menerima 4 argumen berupa :
-    i. Detik : 0-59 atau * (any value) 
-    ii. Menit : 0-59 atau * (any value) 
-    iii. Jam : 0-23 atau * (any value)
-    iv. Path file .sh
+    - Detik : 0-59 atau * (any value) 
+    - Menit : 0-59 atau * (any value) 
+    - Jam : 0-23 atau * (any value)
+    - Path file .sh
     
 (b) Program akan mengeluarkan pesan error jika argumen tidak sesuai.
 
-(c) Program hanya menerima 1 configuration cron
+(c) Program hanya menerima 1 configuration cron.
 
-(d) Program berjalan di background (daemon)
+(d) Program berjalan di background (daemon).
 
-(e) Tidak boleh menggunakan fungsi system()
+(e) Tidak boleh menggunakan fungsi system().
 
 **KODINGAN :**
 
 ***soal1.c***
 ```c
-ea blm ajg
+ea blm
 ```
 **PENJELASAN :**
 
@@ -52,7 +52,7 @@ Kiwa udh jago, jadi dia bikin program :
 
 ***soal2.c***
 ```c
-ea blm bgst
+ea blm
 ```
 **PENJELASAN :**
 
@@ -71,9 +71,248 @@ Beberapa tugas harus dikerjakan secara bersamaan :
 
 ***soal3.c***
 ```c
-ea blm jancuks
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <syslog.h>
+#include <string.h>
+
+int main(){
+	pid_t child_1;
+	int status;
+
+	child_1 = fork();
+	if (child_1 < 0) {
+		exit(EXIT_FAILURE);
+	}
+	
+	if (child_1 == 0) {
+	// child 1
+		char *argv[] = {"mkdir", "-p", "/home/devi/modul2/indomie", NULL};
+		execv("/bin/mkdir", argv);
+	} else if (child_1 > 0) {
+	// parent 1
+		//int status1;
+		child_1 = fork();
+		if (child_1 == 0) {
+		// child 2
+			sleep(5);
+			char *argv[] = {"mkdir", "-p", "/home/devi/modul2/sedaap", NULL};
+			execv("/bin/mkdir", argv);
+		} else if (child_1 > 0) {
+		// parent 2
+			int status2;
+			child_1 = fork();
+			if (child_1 == 0) {
+			// child 3
+				//while (wait(&status) > 0);
+				chdir("/home/devi/modul2");
+				char *zip[] = {"unzip", "/home/devi/modul2/jpg.zip", NULL};
+				execv("/usr/bin/unzip", zip);
+			} else {
+			// parent 3
+				while ((wait(&status2)) > 0);
+				struct dirent *drct;
+				DIR *dir = opendir("/home/devi/modul2/jpg");
+
+				if (dir == NULL) {	
+					return 0;
+				}
+	
+				while ((drct = readdir(dir)) != NULL) {
+					char path[100];		
+					struct stat filetype;
+					if (strcmp(drct->d_name, ".") == 0 || strcmp(drct->d_name, "..") == 0) {		
+						continue;
+					} else {
+						strcpy(path, "/home/devi/modul2/jpg/");
+						strcat(path, drct->d_name);
+
+						if (stat(path, &filetype) == 0) {
+							if (filetype.st_mode & S_IFDIR) {
+								if (child_1 = fork() == 0) {
+									char *move1[] = {"mv", path, "/home/devi/modul2/indomie/", NULL};
+									execv("/bin/mv", move1);
+								}
+							} else {
+								if (child_1 = fork() == 0) {
+									char *move2[] = {"mv", path, "/home/devi/modul2/sedaap/", NULL};
+									execv("/bin/mv", move2);
+								} 
+							}
+						}
+					}
+				}
+				closedir(dir); 
+		
+				struct dirent *makefile;
+				DIR *file = opendir("/home/devi/modul2/indomie");
+		
+				while ((makefile = readdir(file)) != NULL) {
+					char location[100];
+					if (strcmp(makefile->d_name, ".") == 0 || strcmp(makefile->d_name, "..") == 0) {		
+						continue;
+					} else {
+						strcpy(location, "/home/devi/modul2/indomie/");
+						strcat(location, makefile->d_name);
+			
+						if (child_1 = fork() > 0) {
+							chdir(location);
+							char *mktxt1[] = {"touch", "coba1.txt", NULL};
+							execv("/bin/touch", mktxt1);
+						} sleep(3);
+						if (child_1 = fork() > 0) {
+							chdir(location);
+							char *mktxt2[] = {"touch", "coba2.txt", NULL};
+							execv("/bin/touch", mktxt2);
+						}
+					}
+				}
+				closedir(file);					
+			}
+		}
+	}  
+}
 ```
 **PENJELASAN :**
+
+`fork()` pertama digunakan untuk melahirkan anak yang akan mengeksekusi perintah untuk membuat direktori bernama **'indomie'** pada folder modul 2. Parent akan melahirkan anak lain pada scope yang berbeda. Karena fungsi `mkdir()` tidak boleh digunakan, maka digunakan fungsi `exec`. fungsi `mkdir` dipanggil melalui `execv`. 
+
+```c
+child_1 = fork();
+	if (child_1 < 0) {
+		exit(EXIT_FAILURE);
+	}
+	
+	if (child_1 == 0) {
+	// child 1
+		char *argv[] = {"mkdir", "-p", "/home/devi/modul2/indomie", NULL};
+		execv("/bin/mkdir", argv);
+  }
+```
+`fork()` kedua digunakan untuk melahirkan anak yang akan mengeksekusi perintah untuk membuat direktori bernama **'sedaap'** pada folder modul 2. Parent akan melahirkan anak lain pada scope yang berbeda. Karena fungsi `mkdir()` tidak boleh digunakan, maka digunakan fungsi `exec`. fungsi `mkdir` dipanggil melalui `execv`. 
+untuk melakukan penjedaan selama 5 detik sebelum pembuatan folder **'sedaap'**, digunakan fungsi `sleep(5)`.
+```c
+child_1 = fork();
+		if (child_1 == 0) {
+		// child 2
+			sleep(5);
+			char *argv[] = {"mkdir", "-p", "/home/devi/modul2/sedaap", NULL};
+			execv("/bin/mkdir", argv);
+		} 
+```
+`fork()` kedua digunakan untuk melahirkan anak yang akan mengeksekusi perintah untuk mengekstrak file `zip` bernama **'jpg.zip'** pada folder modul 2. Parent akan melahirkan anak lain pada scope yang berbeda. Fungsi `unzip` dipanggil melalui `execv`. 
+```c
+int status2;
+			child_1 = fork();
+			if (child_1 == 0) {
+			// child 3
+				//while (wait(&status) > 0);
+				chdir("/home/devi/modul2");
+				char *zip[] = {"unzip", "/home/devi/modul2/jpg.zip", NULL};
+				execv("/usr/bin/unzip", zip);
+			}
+```
+Perlu juga mendeclare `int status2;`, karena pengeksekusian dari parent process harus menunggu child process selesai terlebih dahulu. Dalam hal ini, untuk menyortir file, harus menunggu proses `unzip` selesai terlebih dahulu.
+
+Kemudian parent process untuk menyortir file akan dieksekusi. 
+
+Fungsi `while ((wait(&status2)) > 0);` dipanggil untuk menunggu child process. 
+Proses penyortiran file dilakukan dengan pertama-tama membuka direktori jpg yang merupakan hasil ekstrak dari `zip`. Kemudian dilakukan pengecekkan, apabila isi direktori tersebut kosong, maka `return 0`.
+```c
+while ((wait(&status2)) > 0);
+				struct dirent *drct;
+				DIR *dir = opendir("/home/devi/modul2/jpg");
+
+				if (dir == NULL) {	
+					return 0;
+				}
+```
+Apabila direktori tidak kosong, maka proses sortir akan dijalankan.
+Pertama buat array `path[100]` yang digunakan untuk menampung path dari masing-masing file/direktori yang berada dalam folder jpg.
+Kemudian buat `struct` yang menyimpan tipe file. Karena direktori "." dan ".." tidak termasuk, maka perlu dilakukan pengecekkan direktori dengan menggunakan fungsi `strcmp`, apabila perbedaannya = 0, maka `continue`, direkrori tidak ikut di sortir. 
+```c
+				while ((drct = readdir(dir)) != NULL) {
+					char path[100];		
+					struct stat filetype;
+					if (strcmp(drct->d_name, ".") == 0 || strcmp(drct->d_name, "..") == 0) {		
+						continue;
+					} 
+```
+Kemudian path dari masing-masing file/direktori dimasukkan ke array `path` dengan mengcopy (`strcpy`) path folder jpg, lalu ditambahkan dengan direktori/file name menggunakan `strcat`.
+```c
+          else {
+						strcpy(path, "/home/devi/modul2/jpg/");
+						strcat(path, drct->d_name);
+```
+Lalu dilakukan proses pengecekkan dengan menggunakan `filetype.st_mode & S_IFDIR`, apabila type file merupakan direktori, akan di move ke direktori **'indomie'**. Pemindahan menggunakan command `mv` yang dipanggil dengan `execv`.  
+```c
+						if (stat(path, &filetype) == 0) {
+							if (filetype.st_mode & S_IFDIR) {
+								if (child_1 = fork() == 0) {
+									char *move1[] = {"mv", path, "/home/devi/modul2/indomie/", NULL};
+									execv("/bin/mv", move1);
+								}
+```
+Setelah semua direktori di dalam folder jpg masuk ke direktori indomie, maka sisanya akan dimasukkan ke direktori **'sedaap'**. Karena diawal kita membuka direktori jpg, maka sekarang ditutup dengan fungsi `closedir`.
+```c
+							} else {
+								if (child_1 = fork() == 0) {
+									char *move2[] = {"mv", path, "/home/devi/modul2/sedaap/", NULL};
+									execv("/bin/mv", move2);
+								} 
+							}
+						}
+					}
+				}
+				closedir(dir); 
+```
+Untuk membuat file `coba1.txt` dan `coba2.txt` kurang lebih sama dengan proses sortir file. Pertama open direktori indomie, karena direktori yang akan diisi berada didalamnya. Kemudian lakukan komparasi untuk meng-exclude direktori "." dan "..".
+```c
+struct dirent *makefile;
+				DIR *file = opendir("/home/devi/modul2/indomie");
+		
+				while ((makefile = readdir(file)) != NULL) {
+					char location[100];
+					if (strcmp(makefile->d_name, ".") == 0 || strcmp(makefile->d_name, "..") == 0) {		
+						continue;
+					} 
+```
+kemudian path dari masing-masing direktori didalam folder indomie dimasukkan ke array `location`.
+```c
+          else {
+						strcpy(location, "/home/devi/modul2/indomie/");
+						strcat(location, makefile->d_name);
+```
+Kemudian dilakukan pemindahan direktori ke direktori yang akan diisi file `.txt` dengan menggunakan fungsi `chdir`. Setelah itu dijalankan command untuk membuat file `coba1.txt` yaitu `touch` yang dipanggil melalui `execv`. Karena pembuatan file antara coba1 dan coba2 perlu dijeda, maka digunakan fungsi `sleep(3);`. Lalu buat file `coba2.txt` dengan cara yang sama. 
+```
+						if (child_1 = fork() > 0) {
+							chdir(location);
+							char *mktxt1[] = {"touch", "coba1.txt", NULL};
+							execv("/bin/touch", mktxt1);
+						} sleep(3);
+						if (child_1 = fork() > 0) {
+							chdir(location);
+							char *mktxt2[] = {"touch", "coba2.txt", NULL};
+							execv("/bin/touch", mktxt2);
+						}
+					}
+				}
+				closedir(file);					
+			}
+		}
+	}  
+}
+```
+Kemudian tutup directory dengan fungsi `closedir`.
+
 
 
 
