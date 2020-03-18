@@ -30,7 +30,7 @@ Buatlah program C yang menyerupai crontab untuk menjalankan script bash, dengan 
 
 ***soal1.c***
 ```
-[kodingan] (https://github.com/notdevi/SoalShiftSISOP20_modul2_C10/blob/master/soal1/soal1.c)
+[kodingan](https://github.com/notdevi/SoalShiftSISOP20_modul2_C10/blob/master/soal1/soal1.c)
 ```
 **PENJELASAN :**
 
