@@ -52,6 +52,7 @@ Kiwa udh jago, jadi dia bikin program :
 [kodingan](https://github.com/notdevi/SoalShiftSISOP20_modul2_C10/blob/master/soal2/soal2.c)
 
 ***soal2_killer***
+
 [kodingan_killer](https://github.com/notdevi/SoalShiftSISOP20_modul2_C10/blob/master/soal2/soal2_killer.c)
 
 **PENJELASAN :**
