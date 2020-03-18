@@ -139,7 +139,7 @@ pid_t pid, sid;
     }
 ```
 
-Di perulangan `while(1)` , kami menggunakan struct time.h untuk melakukan segala proses yang berkaitan dengan waktu. `fork(), wait(), exec()` digunakan supaya program bisa berjalan dan dapat dikill sehingga tidak menghabiskan memori. Daemon akan terus berjalan dengan jeda 1 detik (fungsi'sleep(1)'), hingga daemon diberhentikan.
+Di perulangan `while(1)` , kami menggunakan struct time.h untuk melakukan segala proses yang berkaitan dengan waktu. `fork(), wait(), exec()` digunakan supaya program bisa berjalan dan dapat dikill sehingga tidak menghabiskan memori. Daemon akan terus berjalan dengan jeda 1 detik ( fungsi 'sleep(1)' ), hingga daemon diberhentikan.
 
 ### Soal No. 2
 Kiwa udh jago, jadi dia bikin program :
