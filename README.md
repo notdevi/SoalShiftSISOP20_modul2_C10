@@ -34,6 +34,113 @@ Buatlah program C yang menyerupai crontab untuk menjalankan script bash, dengan 
 
 **PENJELASAN :**
 
+Kita harus cek apakah argumen berupa bintang/ * atau angka, untuk cek apakah argumen tersebut berupa bintang atau bukan dengan fungsi :
+```c
+int cek_bintang(char source[])
+{
+  if (source[0] == '*') return 1;
+
+  return 0;
+}
+```
+
+Sedangkan untuk cek apakah argumen berupa angka atau bukan dengan fungsi :
+```c
+int isDigit(char source[]) {
+  for (int i = 0; i < strlen(source); i++)
+    if (source[i] < '0' || source[i] > '9')
+      return 0;
+
+  return 1;
+}
+```
+
+Masuk ke int main, kita harus cek apakah argumen yang dimasukkan sudah benar berjumlah 5 atau belum dengan `if(argc == 5)`, jika salah kita masuk ke else yang berada di akhir program.
+
+Lalu kita melakukan looping untuk cek apakah argumen detik, menit, jam berupa bintang atau angka atau bukan.
+```c
+for (x = 1; x < 4; x++) {
+            if (isDigit(argv[x])) {
+                argument[x] = atoi(argv[x]);
+                if(argument[x] < 0)
+                    printf("argument %d is not valid\n", x);
+            }
+            else if (cek_bintang(argv[x]))
+                argument[x] = -1;
+            else {
+                printf("argument %d tidak sesuai dengan yang diminta\n", x);
+                exit(EXIT_FAILURE);
+            }
+        }
+```
+
+Selanjutnya kita cek apakah waktu dari detik, menit, jam itu diluar range yang ditentukan atau tidak.
+```cc
+        if (argument[1] < 0 || argument[1] > 59 || 
+                argument[2] < 0 || argument[2] > 59 || 
+                    argument[3] < 0|| argument[3] > 23) {
+            printf("argumentt tidak valid\n");
+            exit(EXIT_FAILURE);
+        }
+```
+
+Soal diminta untuk program berjalan di background, maka kami menggunakan template daemon seperti di modul 2.
+```c
+pid_t pid, sid;
+
+        pid = fork();
+
+        if (pid < 0)
+            exit(EXIT_FAILURE);
+
+        if (pid > 0) 
+            exit(EXIT_SUCCESS);
+
+        umask(0);
+
+        sid = setsid();
+        if (sid < 0)
+            exit(EXIT_FAILURE);
+
+        if ((chdir("/")) < 0) {
+            exit(EXIT_FAILURE);
+        }   
+        
+        close(STDIN_FILENO);
+        close(STDOUT_FILENO);
+        close(STDERR_FILENO);
+
+        while(1){
+            time_t waktu = time(NULL);              //struct bawaan c utk waktu sekarang
+            struct tm *now_tm = localtime(&waktu);  //buat mengetahui waktu sekarang
+
+            detik_skrng = now_tm->tm_sec;
+            menit_skrng = now_tm->tm_min;
+            jam_skrng = now_tm->tm_hour;
+
+            if((detik_skrng == argument[1] || argument[1] == -1)
+                && (menit_skrng == argument[2] || argument[2] == -1)
+                    && (jam_skrng == argument[3] || argument[3] == -1)) {
+                        pid_t child_id;
+                        child_id = fork();
+
+                        if (child_id < 0) {
+                            printf("fail to fork");
+                            exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
+                        }
+
+                        if (child_id == 0) {    
+                            char *trm[] = {"bash", argv[4], NULL};
+                            execv("/bin/bash", trm);
+                        }
+                    }
+            sleep(1);    //delay selama 1 detik
+        }  
+    }
+```
+
+Di perulangan `while(1)` , kami menggunakan struct time.h untuk melakukan segala proses yang berkaitan dengan waktu. `fork(), wait(), exec()` digunakan supaya program bisa berjalan dan dapat dikill sehingga tidak menghabiskan memori. Daemon akan terus berjalan dengan jeda 1 detik (fungsi'sleep(1)'), hingga daemon diberhentikan.
+
 ### Soal No. 2
 Kiwa udh jago, jadi dia bikin program :
 
