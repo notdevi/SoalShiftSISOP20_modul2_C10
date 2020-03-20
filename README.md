@@ -299,6 +299,17 @@ Anak dari fork ke empat mengeksesuki proses zipping dan menghapus folder setelah
 ```
 setiap membuat folder diberi jeda 30 detik maka diberi `sleep(30);`.
 
+**HASIL :**
+
+program utama dan killer berjalan.
+![](screenshoot/2.1.png)
+
+direktori dan zip terbuat.
+![](screenshoot/2.2.png)
+
+isi file zip.
+![](screenshoot/2.3.png)
+
 ### Soal No. 3
 Beberapa tugas harus dikerjakan secara bersamaan :
 
@@ -442,6 +453,18 @@ Kemudian dilakukan pemindahan direktori ke direktori yang akan diisi file `.txt`
 ```
 Kemudian tutup directory dengan fungsi `closedir`.
 
+**HASIL :**
 
+program berhasil membuat folder indomie dan sedaap, serta mengekstrak file zip.
+![](screenshoot/3.1.png)
 
+direktori berhasil dipindahkan ke folder indomie.
+![](screenshoot/3.2.png)
 
+file berhasil dipindahkan ke folder sedaap.
+![](screenshoot/3.3.png)
+
+file coba1.txt dan coba2.txt berhasil dibuat.
+![](screenshoot/3.3.png)
+
+![](screenshoot/3.3.png)
