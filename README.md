@@ -466,6 +466,6 @@ file berhasil dipindahkan ke folder sedaap.
 ![](screenshoot/3.3.png)
 
 file coba1.txt dan coba2.txt berhasil dibuat.
-![](screenshoot/3.3.png)
+![](screenshoot/3.4.png)
 
-![](screenshoot/3.3.png)
+![](screenshoot/3.5.png)
