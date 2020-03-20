@@ -308,6 +308,7 @@ direktori dan zip terbuat.
 ![](screenshoot/2.2.png)
 
 isi file zip.
+
 ![](screenshoot/2.3.png)
 
 ### Soal No. 3
