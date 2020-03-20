@@ -78,6 +78,7 @@ int main(){
 					}
 				}
 				closedir(dir); 
+				sleep(1);
 		
 				struct dirent *makefile;
 				DIR *file = opendir("/home/devi/modul2/indomie");
