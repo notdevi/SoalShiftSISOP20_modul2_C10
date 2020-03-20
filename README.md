@@ -158,13 +158,146 @@ Kiwa udh jago, jadi dia bikin program :
 
 [kodingan](https://github.com/notdevi/SoalShiftSISOP20_modul2_C10/blob/master/soal2/soal2.c)
 
-***soal2_killer***
-
-[kodingan_killer](https://github.com/notdevi/SoalShiftSISOP20_modul2_C10/blob/master/soal2/soal2_killer.c)
-
 **PENJELASAN :**
 
-blm jalan.
+Pertama, dibuat sebuah fungsi `times` yang berfungsi untuk mengambil local time untuk penamaan direktori dan zip. Pengambilan local time menggunakan fungsi `sprintf` yang menyimpan string localtime dalam variable `filename` dan return value berupa variable `filename`.
+```c
+char *times(){
+	int jam, menit, detik, hari, bulan, tahun;
+  	time_t rawtime = time(NULL);
+  	struct tm tm = *localtime(&rawtime);
+
+  	jam = tm.tm_hour;
+  	menit = tm.tm_min;
+  	detik = tm.tm_sec;
+  	hari = tm.tm_mday;
+  	bulan = tm.tm_mon+1;
+  	tahun = tm.tm_year+1900;
+
+  	sprintf(filename, "%02d-%02d-%d_%02d:%02d:%02d",
+          	hari, bulan, tahun, jam, menit, detik);
+
+  return filename;
+}
+```
+Karena program dapat dijalankan dalam 2 mode, maka dibuat percabangan `if` yang mengecak argumen yang diiinputkan. 
+
+Apabila dimasukkan -a, proses yang dijalankan soal2 akan langsung di hentikan total, dengan memasukkan command `#!/bin/bash\nkillall soal2` pada file `soal2_killer.sh` yang dibuat. 
+
+Kemudian setelah command dijalankan, file soal2_killer akan dihapus dengan `rm $0`.
+```c
+if(strcmp(argv[1], "-a") == 0) {
+	fprintf(killer, "#!/bin/bash\nkillall revisisoal2\n");
+	fprintf(killer, "rm $0");
+}
+```
+Apabila dimasukkan -b, parent process dijalankan soal2 akan di hentikan, dengan menjalankan command `#!/bin/bash\nkill %d` dimana `%d` adalah pid yang didapatkan dari fungsi `getpid()` pada file `soal2_killer.sh` yang dibuat. 
+
+Kemudian setelah command dijalankan, file soal2_killer akan dihapus dengan `rm $0`.
+```c
+else if(strcmp(argv[1], "-b") == 0) {
+	fprintf(killer, "#!/bin/bash\nkill %d\n", getpid());
+	fprintf(killer, "rm $0");
+}
+```
+Apabila input yang dimasukkan tidak sesuai, maka akan muncul message error.
+```c
+else {
+	printf("maaf tidak bisa dikabulkan, gunakan -a atau -b\n");
+	exit(0);
+}
+```
+Karena process berjalan pada background, maka digunakan template daemon process
+```c
+	pid_t pid, sid, child_1, child_2, child_3, child_4;
+
+	pid = fork();
+
+	if(pid < 0) {
+		exit(EXIT_FAILURE);
+	} 
+	if(pid > 0) {
+		exit(EXIT_SUCCESS);
+	}
+	
+	umask(0);
+
+	sid = setsid();
+	if(sid < 0) {
+		exit(EXIT_FAILURE);
+	} 
+	if((chdir("/home/devi/")) < 0) {
+		exit(EXIT_FAILURE);
+	}
+
+  	close(STDIN_FILENO);
+  	close(STDOUT_FILENO);
+  	close(STDERR_FILENO);
+
+	while(1) {
+	...
+	}
+```
+Proses pertama yang dijalankan dalam while adalah untuk membuat direktori yang diberi nama sesuai timestamp.
+Pertama fungsi `times()` dipanggil, lalu dicoppy ke variable `folder`, kemudian isinya akan digabung dengan variable `dirname` yang berisi direktori `"/home/devi/"`.
+```c
+	strcpy(folder, times());
+	strcat(dirname, folder);
+```
+Anak dari fork pertama digunakan untuk mengeksekusi pembuatan folder menggunakan command `mkdir` yang dipanggil menggunakan `execv`.
+```c
+	if(child_1 == 0) {
+		char *makedir[] = {"mkdir", "-p", dirname, NULL};
+		execv("/bin/mkdir", makedir);
+	}
+```
+Karena ukuran foto yang diminta berukuran `(t%1000)+100` maka dijalankan :
+```c
+	unsigned long epoch = time(NULL), 
+		      size = (epoch%1000)+100;
+	sprintf(picsize, "%lu", (epoch%1000)+100);
+```
+Kemudian anak dari fork kedua mengeksekusi proses download gambar. Gambar diunduh sebanyak 20 kali per folder, maka digunakan perulangan `for(int i = 1; i <= 20; i++)`. 
+
+Hasil dari penghitungan ukuran foro yang disimpan pada variable `picsize` kemudian di gabung dengan URL pengunduhan gambar dengan menggunakan `strcat(url, picsize);`.
+
+Proses download dieksekusi dengan command `wget` yang dipanggil menggunakan `execv`.
+```c
+	if(child_2 == 0) {
+		for(int i = 1; i <= 20; i++) {
+			unsigned long epoch = time(NULL), 
+		                      size = (epoch%1000)+100;
+			sprintf(picsize, "%lu", (epoch%1000)+100);
+
+			char url[100] = "https://picsum.photos/";
+			strcat(url, picsize);
+
+			strcpy(fordir, dirname);
+			strcat(fordir, "/");
+			strcat(fordir, times());
+			
+			child_3 = fork();
+			if(child_3 == 0) {
+				char *donlot[] = {"wget", url, "-O", fordir, NULL};
+				execv("/usr/bin/wget", donlot);
+			}
+			sleep(5);
+		}
+```
+Setelah terdownload 20 gambar, folder akan di `zip` lalu dihapus. Untuk penamaan dari file `zip`, string dari variable `folder` yang sudah berisi timestamp di copy ke variable `zipname`, kemudian ditambahkan `.zip`.
+```c
+	strcpy(zipname, folder);
+	strcat(zipname, ".zip");
+```
+Anak dari fork ke empat mengeksesuki proses zipping dan menghapus folder setelah di zip. Proses zip dan remove dieksekusi dengan command `zip` dan `-rm` yang dipanggil menggunakan `execv`.
+```c
+	child_4 = fork();
+	if(child_4 == 0) {
+		char *rmv[] = {"zip", "-rm", zipname, folder, NULL};
+		execv("/usr/bin/zip", rmv);
+	}
+```
+setiap membuat folder diberi jeda 30 detik maka diberi `sleep(30);`.
 
 ### Soal No. 3
 Beberapa tugas harus dikerjakan secara bersamaan :
