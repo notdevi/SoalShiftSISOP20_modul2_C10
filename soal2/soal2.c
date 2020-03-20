@@ -38,7 +38,7 @@ int main(int argc, char const *argv[]) {
 
 	if(argc == 2){
 		if(strcmp(argv[1], "-a") == 0) {
-			fprintf(killer, "#!/bin/bash\nkillall revisisoal2\n");
+			fprintf(killer, "#!/bin/bash\nkillall soal2\n");
 			fprintf(killer, "rm $0");
 		}
 		else if(strcmp(argv[1], "-b") == 0) {
