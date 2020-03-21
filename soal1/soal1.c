@@ -9,7 +9,6 @@
 #include <syslog.h>
 #include <string.h>
 #include <time.h>
-#include <ctype.h>
 
 int cek_bintang(char source[])
 {
@@ -26,31 +25,35 @@ int isDigit(char source[]) {
   return 1;
 }
 
-int main(int argc, char *argv[]) {
-    int detik_skrng, menit_skrng, jam_skrng;
-    int cek1 = 0, cek2 = 0, cek3 = 0, cek4 = 0;
 
+int main(int argc, char **argv) {
+    int detik_skrng, menit_skrng, jam_skrng;
     if(argc == 5) {
-        int argument[4], x;
-        for (x = 1; x < 4; x++) {
+        int argument[4];
+        for (int x = 1; x < 4; x++) {
             if (isDigit(argv[x])) {
                 argument[x] = atoi(argv[x]);
                 if(argument[x] < 0)
-                    printf("argument %d is not valid\n", x);
+                    printf("argument %d bukan angka\n", x);
             }
             else if (cek_bintang(argv[x]))
                 argument[x] = -1;
             else {
-                printf("argument %d tidak sesuai dengan yang diminta\n", x);
+                printf("argument %d sesuai dengan yang diminta\n", x);
                 exit(EXIT_FAILURE);
             }
-        }
 
-        if (argument[1] < 0 || argument[1] > 59 || 
-                argument[2] < 0 || argument[2] > 59 || 
-                    argument[3] < 0|| argument[3] > 23) {
-            printf("argumentt tidak valid\n");
-            exit(EXIT_FAILURE);
+            int cek = atoi(argv[x]);
+            //cek range detik dan menit
+            if ((x == 0 || x ==1) && (cek > 59 || cek < 0)) {
+                printf("Argumen Tidak Sesuai Range yang Diminta\n");
+                return 0;
+            }
+            //cek range jam
+            if (x == 2 && (cek > 23 || cek < 0 )){
+                printf("Argumen Tidak Sesuai Range yang Diminta\n");
+                return 0;
+            }
         }
 
         pid_t pid, sid;
@@ -69,44 +72,40 @@ int main(int argc, char *argv[]) {
         if (sid < 0)
             exit(EXIT_FAILURE);
 
-        if ((chdir("/")) < 0) {
-            exit(EXIT_FAILURE);
-        }   
-        
         close(STDIN_FILENO);
         close(STDOUT_FILENO);
         close(STDERR_FILENO);
 
-        while(1){
-            time_t waktu = time(NULL);              //struct bawaan c utk waktu sekarang
-            struct tm *now_tm = localtime(&waktu);  //buat mengetahui waktu sekarang
+        while (1)  {
+            time_t waktu;
+            struct tm* now_tm;  
 
+            waktu = time(NULL);
+            now_tm = localtime(&waktu);
+            
             detik_skrng = now_tm->tm_sec;
             menit_skrng = now_tm->tm_min;
             jam_skrng = now_tm->tm_hour;
 
-            if((detik_skrng == argument[1] || argument[1] == -1)
-                && (menit_skrng == argument[2] || argument[2] == -1)
-                    && (jam_skrng == argument[3] || argument[3] == -1)) {
+            if ((detik_skrng == argument[1] || argument[1] == -1) 
+                && (menit_skrng == argument[2] || argument[2] == -1) 
+                    && (jam_skrng || argument[3] == -1)) {
                         pid_t child_id;
                         child_id = fork();
 
-                        if (child_id < 0) {
-                            printf("fail to fork");
-                            exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
-                        }
+                        int sts;
 
                         if (child_id == 0) {    
-                            char *trm[] = {"bash", argv[4], NULL};
-                            execv("/bin/bash", trm);
+                            char *argexec[] = {"bash", argv[4], NULL};
+                            execv("/bin/bash", argexec);
                         }
                     }
-            sleep(1);    //delay selama 1 detik
-        }  
-    }
-    
-    else {      //ketika tidak masuk syarat jumlah argument yg diminta yaitu harus 5
-        printf("argument yang dimasukkan tidak sesuai dengan jumlah yang diminta\n");
-        exit(EXIT_FAILURE);
+
+                sleep(1);
+            }
+        }
+    else {
+            printf("argument is not valid!\n");
+            exit(EXIT_FAILURE);
     }
 }
