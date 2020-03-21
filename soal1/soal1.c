@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
             else if (cek_bintang(argv[x]))
                 argument[x] = -1;
             else {
-                printf("argument %d sesuai dengan yang diminta\n", x);
+                printf("argument %d tidak sesuai dengan yang diminta\n", x);
                 exit(EXIT_FAILURE);
             }
 
