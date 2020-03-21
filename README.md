@@ -154,7 +154,7 @@ Di perulangan `while(1)` , kami menggunakan struct time.h untuk melakukan segala
 
 **HASIL :**
 program akan menjalankan sebuah perintah untuk menjalankan `date.sh` setiap detik ke 5
-![](screenshoot/1.1.png)
+[foto]
 
 isi dari file dari `date.sh` sendiri yang nantinya akan membuat `date.txt`. 
 ![](screenshoot/1.2.png)
