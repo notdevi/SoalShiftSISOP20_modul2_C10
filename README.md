@@ -153,8 +153,7 @@ pid_t pid, sid;
 Di perulangan `while(1)` , kami menggunakan struct time.h untuk melakukan segala proses yang berkaitan dengan waktu. `fork(), wait(), exec()` digunakan supaya program bisa berjalan dan dapat dikill sehingga tidak menghabiskan memori. Daemon akan terus berjalan dengan jeda 1 detik (fungsi`sleep(1)`), hingga daemon diberhentikan.
 
 **HASIL :**
-program akan menjalankan sebuah perintah untuk menjalankan `date.sh` setiap detik ke 5
-![](screenshoot/1.1.png)
+
 
 isi dari file dari `date.sh` sendiri yang nantinya akan membuat `date.txt`. 
 ![](screenshoot/1.2.png)
