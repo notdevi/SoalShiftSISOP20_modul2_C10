@@ -36,8 +36,7 @@ Buatlah program C yang menyerupai crontab untuk menjalankan script bash, dengan 
 
 Kita harus cek apakah argumen berupa bintang/ * atau angka, untuk cek apakah argumen tersebut berupa bintang atau bukan dengan fungsi :
 ```c
-int cek_bintang(char source[])
-{
+int cek_bintang(char source[]) {
   if (source[0] == '*') return 1;
 
   return 0;
@@ -55,7 +54,14 @@ int isDigit(char source[]) {
 }
 ```
 
-Masuk ke int main, kita harus cek apakah argumen yang dimasukkan sudah benar berjumlah 5 atau belum dengan `if(argc == 5)`, jika salah kita masuk ke else yang berada di akhir program.
+Masuk ke int main, kita harus cek apakah argumen yang dimasukkan sudah benar berjumlah 5 atau belum dengan `if(argc == 5)`, jika salah kita masuk ke 
+```c
+	else {
+        	printf("argument is not valid!\n");
+            	exit(EXIT_FAILURE);
+    	}
+```
+yang berada di akhir program.
 
 Lalu kita melakukan looping untuk cek apakah argumen detik, menit, jam berupa bintang atau angka atau bukan.
 ```c
@@ -76,12 +82,17 @@ for (x = 1; x < 4; x++) {
 
 Selanjutnya kita cek apakah waktu dari detik, menit, jam itu diluar range yang ditentukan atau tidak.
 ```cc
-        if (argument[1] < 0 || argument[1] > 59 || 
-                argument[2] < 0 || argument[2] > 59 || 
-                    argument[3] < 0|| argument[3] > 23) {
-            printf("argumentt tidak valid\n");
-            exit(EXIT_FAILURE);
-        }
+        int cek = atoi(argv[x]);
+            //cek range detik dan menit
+            if ((x == 0 || x ==1) && (cek > 59 || cek < 0)) {
+                printf("Argumen Tidak Sesuai Range yang Diminta\n");
+                return 0;
+            }
+            //cek range jam
+            if (x == 2 && (cek > 23 || cek < 0 )){
+                printf("Argumen Tidak Sesuai Range yang Diminta\n");
+                return 0;
+            }
 ```
 
 Soal diminta untuk program berjalan di background, maka kami menggunakan template daemon seperti di modul 2.
