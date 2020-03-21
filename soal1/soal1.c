@@ -10,8 +10,7 @@
 #include <string.h>
 #include <time.h>
 
-int cek_bintang(char source[])
-{
+int cek_bintang(char source[]) {
   if (source[0] == '*') return 1;
 
   return 0;
